@@ -1,3 +1,9 @@
+## [0.0.14](https://github.com/varletjs/ruler-factory/compare/v0.0.13...v0.0.14) (2026-01-29)
+
+### Features
+
+- support uniq and uniqBy ([0cccaec](https://github.com/varletjs/ruler-factory/commit/0cccaec29802b8e6eb908e6dcc998dd1fe69986a))
+
 ## [0.0.13](https://github.com/varletjs/ruler-factory/compare/v0.0.12...v0.0.13) (2025-09-07)
 
 ## [0.0.12](https://github.com/varletjs/ruler-factory/compare/v0.0.11...v0.0.12) (2025-09-06)
