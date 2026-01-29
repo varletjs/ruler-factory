@@ -1,4 +1,15 @@
-import { isArray, isBoolean, isEmpty, isFunction, isNumber, isPlainObject, isString, isSymbol } from 'rattail'
+import {
+  hasDuplicates,
+  hasDuplicatesBy,
+  isArray,
+  isBoolean,
+  isEmpty,
+  isFunction,
+  isNumber,
+  isPlainObject,
+  isString,
+  isSymbol,
+} from 'rattail'
 
 export type RulerFactoryMessage = string | (() => string)
 
@@ -46,6 +57,8 @@ export type RulerContext<R, P, E> = Omit<
     lte: (v: number | bigint, message: RulerFactoryMessage, params?: P) => RulerContext<R, P, E>
     positive: (message: RulerFactoryMessage, params?: P) => RulerContext<R, P, E>
     negative: (message: RulerFactoryMessage, params?: P) => RulerContext<R, P, E>
+    uniq: (message: RulerFactoryMessage, params?: P) => RulerContext<R, P, E>
+    uniqBy: (v: (a: any, b: any) => any, message: RulerFactoryMessage, params?: P) => RulerContext<R, P, E>
     is: (v: (value: any) => boolean, message: RulerFactoryMessage, params?: P) => RulerContext<R, P, E>
     not: (v: (value: any) => boolean, message: RulerFactoryMessage, params?: P) => RulerContext<R, P, E>
     done: () => R[]
@@ -107,6 +120,8 @@ export function rulerFactory<R, P = R, E extends Record<string, any> = {}>(
       lte,
       positive,
       negative,
+      uniq,
+      uniqBy,
       is,
       not,
       done,
@@ -535,6 +550,26 @@ export function rulerFactory<R, P = R, E extends Record<string, any> = {}>(
           if (value >= 0) {
             return new Error(getMessage(message))
           }
+        }
+      }, params)
+
+      return ctx
+    }
+
+    function uniq(message: RulerFactoryMessage, params?: P) {
+      addRule((value) => {
+        if (ctx.type === 'array' && hasDuplicates(value)) {
+          return new Error(getMessage(message))
+        }
+      }, params)
+
+      return ctx
+    }
+
+    function uniqBy(v: (a: any, b: any) => any, message: RulerFactoryMessage, params?: P) {
+      addRule((value) => {
+        if (ctx.type === 'array' && hasDuplicatesBy(value, v)) {
+          return new Error(getMessage(message))
         }
       }, params)
 
