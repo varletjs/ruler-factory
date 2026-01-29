@@ -351,4 +351,19 @@ describe('rulerFactory', () => {
     expect(rules[1](BigInt(3))).toBeUndefined()
     expect(rules[1](BigInt(2))).toBeUndefined()
   })
+
+  it('should validate uniq for array', () => {
+    const rules = ruler().array().uniq('Must be unique').done()
+    expect(rules[1]([1, 2, 2])).toEqual(new Error('Must be unique'))
+    expect(rules[1]([1, 2, 3])).toBeUndefined()
+  })
+
+  it('should validate uniqBy for array', () => {
+    const rules = ruler()
+      .array()
+      .uniqBy((a, b) => a.id === b.id, 'Must be unique by id')
+      .done()
+    expect(rules[1]([{ id: 1 }, { id: 2 }, { id: 1 }])).toEqual(new Error('Must be unique by id'))
+    expect(rules[1]([{ id: 1 }, { id: 2 }, { id: 3 }])).toBeUndefined()
+  })
 })
