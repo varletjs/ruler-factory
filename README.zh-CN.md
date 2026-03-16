@@ -2,27 +2,27 @@
 
 [English](./README.md) · [简体中文](./README.zh-CN.md)
 
-A flexible, chainable validation rule factory for TypeScript/JavaScript.
+一个灵活、可链式调用的 TypeScript/JavaScript 校验规则工厂。
 
-## Features
+## 特性
 
-- Chainable API for building complex validation rules
-- Supports string, number, array, boolean, object, symbol, bigint, null, undefined
-- Customizable error messages
-- Easy to extend and integrate
-- TypeScript support
+- 链式 API，可构建复杂校验规则
+- 支持 string、number、array、boolean、object、symbol、bigint、null、undefined
+- 可自定义错误信息
+- 易于扩展与集成
+- 支持 TypeScript
 
-## Installation
+## 安装
 
 ```bash
 pnpm add ruler-factory
-# or
+# 或
 npm install ruler-factory
-# or
+# 或
 yarn add ruler-factory
 ```
 
-## Integration with UI frameworks
+## 与 UI 框架集成
 
 ### Varlet UI
 
@@ -46,12 +46,8 @@ const model = ref({
 
 <template>
   <var-form>
-    <var-input
-      v-model="model.name"
-      placeholder="Name"
-      :rules="r().required('Required').min(2, 'Wrong length').done()"
-    />
-    <var-input v-model="model.age" placeholder="Email" :rules="r().email('Must be email format').done()" />
+    <var-input v-model="model.name" placeholder="姓名" :rules="r().required('必填').min(2, '长度不正确').done()" />
+    <var-input v-model="model.age" placeholder="邮箱" :rules="r().email('必须是邮箱格式').done()" />
   </var-form>
 </template>
 ```
@@ -83,13 +79,8 @@ const model = ref({
 <template>
   <van-form>
     <van-cell-group inset>
-      <van-field v-model="model.name" label="Name" placeholder="Name" :rules="r().required('Required').done()" />
-      <van-field
-        v-model="model.email"
-        label="Email"
-        placeholder="Email"
-        :rules="r().email('Must be email format').done()"
-      />
+      <van-field v-model="model.name" label="姓名" placeholder="姓名" :rules="r().required('必填').done()" />
+      <van-field v-model="model.email" label="邮箱" placeholder="邮箱" :rules="r().email('必须是邮箱格式').done()" />
     </van-cell-group>
   </van-form>
 </template>
@@ -117,10 +108,10 @@ const model = ref({
 
 <template>
   <n-form :model>
-    <n-form-item path="name" label="Name" :rule="r().required('Required').min(2, 'Wrong length').done()">
+    <n-form-item path="name" label="姓名" :rule="r().required('必填').min(2, '长度不正确').done()">
       <n-input v-model:value="model.name" />
     </n-form-item>
-    <n-form-item path="age" label="Age" :rule="r().number().required('Required').negative('Must be negative').done()">
+    <n-form-item path="age" label="年龄" :rule="r().number().required('必填').negative('必须为负数').done()">
       <n-input-number v-model:value="model.age" />
     </n-form-item>
   </n-form>
@@ -153,19 +144,19 @@ const model = ref({
 
 <template>
   <el-form :model>
-    <el-form-item prop="name" label="Name" :rules="r().required('Required').done()">
+    <el-form-item prop="name" label="姓名" :rules="r().required('必填').done()">
       <el-input v-model="model.name" />
     </el-form-item>
-    <el-form-item prop="email" label="Email" :rules="r().email('Must be email format').done()">
+    <el-form-item prop="email" label="邮箱" :rules="r().email('必须是邮箱格式').done()">
       <el-input v-model="model.email" />
     </el-form-item>
   </el-form>
 </template>
 ```
 
-### Extend API
+### 扩展 API
 
-Take `Naive UI` as an example
+以 Naive UI 为例
 
 ```ts
 import { FormItemRule } from 'naive-ui'
@@ -184,7 +175,7 @@ const r = rulerFactory<FormItemRule, FormItemRule, RulerExtendedContext>(
   (ctx) => {
     function ip(message: RulerFactoryMessage, params?: FormItemRule) {
       ctx.addRule((value) => {
-        // Implement isString and isIP by yourself
+        // 自行实现 isString 和 isIP
         if (!isString(value) || !isIP(value)) {
           return new Error(ctx.getMessage(message))
         }
@@ -197,12 +188,12 @@ const r = rulerFactory<FormItemRule, FormItemRule, RulerExtendedContext>(
   },
 )
 
-r().ip('ip format error').done()
+r().ip('IP 格式错误').done()
 ```
 
 ## API
 
-### Types Validation
+### 类型校验
 
 - `.string(message?, params?)`
 - `.number(message?, params?)`
@@ -216,11 +207,11 @@ r().ip('ip format error').done()
 - `.true(message?, params?)`
 - `.false(message?, params?)`
 
-### Non Empty Validation
+### 非空校验
 
 - `.required(message)`
 
-### String Validation
+### 字符串校验
 
 - `.min(value, message, params?)`
 - `.max(value, message, params?)`
@@ -233,65 +224,65 @@ r().ip('ip format error').done()
 - `.lowercase(message, params?)`
 - `.email(message, params?)`
 
-### Number Validation
+### 数字校验
 
 - `.number().min(value, message, params?)`
 - `.number().max(value, message, params?)`
 - `.number().gt(value, message, params?)`
-- `.number().gte(value, message, params?)` alias .min
+- `.number().gte(value, message, params?)` 别名 .min
 - `.number().lt(value, message, params?)`
-- `.number().lte(value, message, params?)` alias .max
+- `.number().lte(value, message, params?)` 别名 .max
 - `.number().positive(value, message, params?)`
 - `.number().negative(value, message, params?)`
 
-### Bigint Validation
+### Bigint 校验
 
 - `.bigint().min(value, message, params?)`
 - `.bigint().max(value, message, params?)`
 - `.bigint().gt(value, message, params?)`
-- `.bigint().gte(value, message, params?)` alias .min
+- `.bigint().gte(value, message, params?)` 别名 .min
 - `.bigint().lt(value, message, params?)`
-- `.bigint().lte(value, message, params?)` alias .max
+- `.bigint().lte(value, message, params?)` 别名 .max
 - `.bigint().positive(value, message, params?)`
 - `.bigint().negative(value, message, params?)`
 
-### Array Validation
+### 数组校验
 
 - `.array().min(value, message, params?)`
 - `.array().max(value, message, params?)`
 - `.array().length(value, message, params?)`
 - `.array().includes(value, message, params?)`
 
-### Predicate Validation
+### 谓词校验
 
 - `.is(fn, message, params?)`
 - `.not(fn, message, params?)`
 
-### Complete rule building
+### 完成规则构建
 
 - `.done()`
 
-### Custom Rule
+### 自定义规则
 
 - `.addRule(validator)`
 
-### Value Transformer
+### 值转换
 
 - `.trim()`
 - `.toLowerCase()`
 - `.toUpperCase()`
 - `.transform(fn)`
 
-## License
+## 许可证
 
 MIT
 
-## Links
+## 链接
 
-- [GitHub Repository](https://github.com/varletjs/ruler-factory)
+- [GitHub 仓库](https://github.com/varletjs/ruler-factory)
 - [Issues](https://github.com/varletjs/ruler-factory/issues)
 
-## Inspired By
+## 灵感来源
 
 [`zod`](https://zod.dev/)
 [`yup`](https://github.com/jquense/yup)
